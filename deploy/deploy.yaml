@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+    app:  demo
+name:  
+  namespace: taobao
+  labels:
+    app:  demo
+spec:
+  selector:
+    matchLabels:
+      app: demo
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  demo
+    spec:
+      imagePullSecrets:
+        - name: docker-id #提前在项目下配置访问docker的账号密码    
+      containers:
+      - name:  demo
+        image: $REGISTRY/$DOCKERHUB_NAMESPACE/lich-say-hello:$BUILD_NUMBER
+        ports:
+        - containerPort:  8080
+          name:  demo
+        volumeMounts:
+        - name: localtime
+          mountPath: /etc/localtime
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /usr/share/zoneinfo/Asia/Shanghai
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: demo
+  namespace: taobao
+spec:
+  selector:
+    app: demo
+  type: ClusterIP
+  sessionAffinity: None
+  sessionAffinityConfig:
+    clientIP:
+      timeoutSeconds: 10800
+  ports:
+  - name: demo
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
