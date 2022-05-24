@@ -1,8 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-    app:  demo
-name:  
+  name: demo
   namespace: taobao
   labels:
     app:  demo
@@ -20,7 +19,7 @@ spec:
         - name: docker-id #提前在项目下配置访问docker的账号密码    
       containers:
       - name:  demo
-        image: $REGISTRY/$DOCKERHUB_NAMESPACE/lich-say-hello:$BUILD_NUMBER
+        image: docker.io/changhua3/lich-say-hello:latest # $REGISTRY/$DOCKERHUB_NAMESPACE/lich-say-hello:$BUILD_NUMBER
         ports:
         - containerPort:  8080
           name:  demo
