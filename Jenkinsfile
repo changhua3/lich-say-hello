@@ -60,25 +60,7 @@ pipeline {
     stage('deploy to prod') {
       agent none
       steps {
-<<<<<<< HEAD
-        container('maven') {
-          withCredentials([
-                                      kubeconfigFile(
-                                        credentialsId: env.KUBECONFIG_CREDENTIAL_ID,
-                                        variable: 'KUBECONFIG')
-                                        ]) {
-                sh 'printenv'
-                sh 'envsubst < deploy/deploy.yaml | kubectl apply -f -'
-              }
-
-            }
-
-          }
-        }
-
-=======
         kubernetesDeploy(configs: 'deploy/deploy.yaml', enableConfigSubstitution: true, kubeconfigId: "$KUBECONFIG_CREDENTIAL_ID")
->>>>>>> 0e80281cce4341025b90882cd1e011d7fa92b29e
       }
     }
   }
