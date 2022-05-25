@@ -60,6 +60,7 @@ pipeline {
     stage('deploy to prod') {
       agent none
       steps {
+<<<<<<< HEAD
         container('maven') {
           withCredentials([
                                       kubeconfigFile(
@@ -75,7 +76,12 @@ pipeline {
           }
         }
 
+=======
+        kubernetesDeploy(configs: 'deploy/deploy.yaml', enableConfigSubstitution: true, kubeconfigId: "$KUBECONFIG_CREDENTIAL_ID")
+>>>>>>> 0e80281cce4341025b90882cd1e011d7fa92b29e
       }
+    }
+  }
       environment {
         DOCKER_CREDENTIAL_ID = 'dockerhub-id'
         GITHUB_CREDENTIAL_ID = 'github-id'
