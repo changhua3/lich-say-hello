@@ -59,7 +59,7 @@ pipeline {
 
     stage ('deploy app') {
       steps {
-         container ('go') {
+         container ('maven') {
             withCredentials([
               kubeconfigFile(
                 credentialsId: env.KUBECONFIG_CREDENTIAL_ID,
