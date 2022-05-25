@@ -56,7 +56,12 @@ pipeline {
 
       }
     }
-
+	stage('deploy to prod') {
+      agent none
+      steps {
+        kubernetesDeploy(configs: 'deploy/deploy.yaml', enableConfigSubstitution: true, kubeconfigId: "$KUBECONFIG_CREDENTIAL_ID")
+      }
+    }
     stage('deploy to prod') {
       agent none
       steps {
@@ -76,6 +81,7 @@ pipeline {
         }
 
       }
+      
       environment {
         DOCKER_CREDENTIAL_ID = 'dockerhub-id'
         GITHUB_CREDENTIAL_ID = 'github-id'
