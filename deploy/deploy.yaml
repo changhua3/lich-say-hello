@@ -9,7 +9,7 @@ spec:
   selector:
     matchLabels:
       app: demo
-  replicas: 1
+  replicas: 4
   template:
     metadata:
       labels:
@@ -48,5 +48,24 @@ spec:
   ports:
   - name: demo
     protocol: TCP
-    port: 8080
+    port: 8081
     targetPort: 8080
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: demo
+  namespace: taobao
+spec:
+  ingressClassName: ingress
+  rules:
+  - host: lich.sayhello.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: demo
+            port:
+              number: 8081

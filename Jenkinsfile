@@ -61,12 +61,16 @@ pipeline {
       agent none
       steps {
         container('maven') {
-              sh 'printenv'
-              sh 'envsubst < deploy/deploy.yaml | kubectl apply -f -'
+          withCredentials([
+                          kubeconfigFile(
+                            credentialsId: env.KUBECONFIG_CREDENTIAL_ID,
+                            variable: 'KUBECONFIG')
+                            ]) {
+                sh 'printenv'
+                sh 'envsubst < deploy/deploy.yaml | kubectl apply -f -'
+              }
 
             }
-
-          }
         }
 
       }
