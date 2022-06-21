@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+      - aws --version
+      - aws eks update-kubeconfig --region $AWS_REGION --name $EKS_CLUSTER_NAME
+      - aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com.cn
+  build:
+    commands:
+      - ./mvnw package
+      - docker build -t $IMAGE_REPO_NAME:$CODEBUILD_START_TIME .
+      - docker tag $IMAGE_REPO_NAME:$CODEBUILD_START_TIME $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com.cn/$IMAGE_REPO_NAME:$CODEBUILD_START_TIME
+  post_build:
+    commands:
+      - docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com.cn/$IMAGE_REPO_NAME:$CODEBUILD_START_TIME
+      - sed -i -e "s/\($AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com.cn\/[^:]*:\)[a-z0-9_-]*/\1$CODEBUILD_START_TIME/g" deploy/deploy.yaml
+      - kubectl apply -f deploy/deploy.yaml
