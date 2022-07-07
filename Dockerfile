@@ -1,7 +1,4 @@
-FROM java:8
+FROM openjdk:18.0-jdk
 WORKDIR /app
 COPY target/*.jar /app/app.jar
-ENV JAVA_OPTS=""
-ENV PARAMS=""
-EXPOSE 8080
-ENTRYPOINT ["sh", "-c", "java -Djava.security.egd=file:/dev/./urandom $JAVA_OPTS -jar /app/app.jar $PARAMS" ]
+ENTRYPOINT ["sh", "-c", "java -Djava.security.egd=file:/dev/./urandom -jar /app/app.jar" ]
